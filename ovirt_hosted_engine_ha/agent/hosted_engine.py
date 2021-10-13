@@ -619,8 +619,11 @@ class HostedEngine(object):
         # would kill it (treat the VM as up when no data, better
         # keep the monitor running if not sure)
         lm = state.data.stats.local
-        if lm.get("engine-health", {})\
-                .get("vm", engine.VMState.UP) == engine.VMState.UP:
+        engine_health = lm.get("engine-health")
+        if (
+            engine_health and
+            engine_health.get("vm", engine.VMState.UP) == engine.VMState.UP
+        ):
             self._log.warn("The VM is running locally or we have no data,"
                            " keeping the domain monitor.")
         else:
