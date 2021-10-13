@@ -500,6 +500,7 @@ class HostedEngine(object):
                 # Checking storage validity in LocalMaintenance is useless,
                 # due to lack of the storage monitoring.
                 st = state.data.stats
+                self._log.info(f'state.data.stats={st}')
                 if st and not st.local.get("maintenance", False):
                     self._initialize_domain_monitor()
                     self._validate_storage_images()
