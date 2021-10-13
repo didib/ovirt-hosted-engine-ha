@@ -175,7 +175,7 @@ class HostedEngine(object):
 
     @property
     def min_memory_threshold(self):
-        return int(self._config.get(config.VM, const.MEM_SIZE))
+        return int(self._config.get(config.VM, const.MEM_SIZE) or 0)
 
     def _get_score_config(self):
         score = {
