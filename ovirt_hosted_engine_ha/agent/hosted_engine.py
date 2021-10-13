@@ -447,8 +447,6 @@ class HostedEngine(object):
         self._shared_configuration_supported = \
             upgrade.is_conf_file_uptodate(self._config)
 
-        self._config.refresh_vm_conf()
-
         try:
             self._monitoring_loop()
         except Exception:
