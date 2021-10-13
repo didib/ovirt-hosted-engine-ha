@@ -497,7 +497,6 @@ class HostedEngine(object):
                 if prev_delay > 0:
                     # make sure everything is still initialized
                     self._initialize_vdsm()
-                    self._config.refresh_vm_conf()
                     self._lock_host_id()
 
                 # stop the VDSM domain monitor in local maintenance, but
@@ -508,6 +507,8 @@ class HostedEngine(object):
                 if st and not st.local.get("maintenance", False):
                     self._initialize_domain_monitor()
                     self._validate_storage_images()
+                    if prev_delay > 0:
+                        self._config.refresh_vm_conf()
                 else:
                     self._stop_domain_monitor_if_possible(state)
 
