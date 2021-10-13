@@ -435,7 +435,6 @@ class HostedEngine(object):
         # to decide)
         self._initialize_vdsm()
         self._initialize_broker()
-        self._initialize_domain_monitor()
         self._lock_host_id()
 
         # check if configuration is up to date, otherwise upgrade (3.5 -> 3.6)
