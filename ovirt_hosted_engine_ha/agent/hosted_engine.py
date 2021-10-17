@@ -490,18 +490,21 @@ class HostedEngine(object):
                                     " failure", exc_info=True)
 
             try:
+                st = state.data.stats
+                self._log.info(f'state.data.stats={st}')
+                local_maintenance = st and st.local.get("maintenance", False)
+                self._log.info(f'local_maintenance={local_maintenance}')
                 if prev_delay > 0:
                     # make sure everything is still initialized
                     self._initialize_vdsm()
-                    self._lock_host_id()
+                    if not local_maintenance:
+                        self._lock_host_id()
 
                 # stop the VDSM domain monitor in local maintenance, but
                 # only when the VM is not running locally.
                 # Checking storage validity in LocalMaintenance is useless,
                 # due to lack of the storage monitoring.
-                st = state.data.stats
-                self._log.info(f'state.data.stats={st}')
-                if st and not st.local.get("maintenance", False):
+                if not local_maintenance:
                     self._initialize_domain_monitor()
                     self._validate_storage_images()
                     if prev_delay > 0:
@@ -524,7 +527,10 @@ class HostedEngine(object):
                                    ))
 
                 # publish the current state
-                self.publish(state)
+                if local_maintenance:
+                    self._log.info('Not publishing state in local maintenance')
+                else:
+                    self.publish(state)
 
             except ServiceNotUpException as e:
                 self._log.info("Required service {} is not up.".format(str(e)))
