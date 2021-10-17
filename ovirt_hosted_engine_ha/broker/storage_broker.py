@@ -132,6 +132,10 @@ class StorageBroker(object):
         Note: this method is called from the client as well as from
         self.get_all_stats_for_service_type().
         """
+        if self._config.get_local_maintenance():
+            self._log.debug('get_raw_stats: In local maintenance')
+            return {}
+
         path, offset = self._backend.filename(self._service_space)
         self._log.debug("Getting stats for service %s from %s with"
                         " offset %d",
