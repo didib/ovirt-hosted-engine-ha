@@ -1,0 +1,44 @@
+---
+name: Check patch
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-el8:
+
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/centos/centos:stream8
+
+    steps:
+    - name: prepare env
+      run: |
+          echo ${{ github.base_ref }}
+          echo ${{ github.ref }}
+          mkdir -p ${PWD}/tmp.repos/BUILD
+          yum install -y --setopt=tsflags=nodocs autoconf automake dnf-utils gettext-devel make git rpm-build python3-devel systemd
+
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - run: ./autogen.sh --system
+    - run: make dist
+    - run: yum-builddep -y ovirt-hosted-engine-ha.spec
+
+    - name: Build RPM
+      run: rpmbuild -D "_topdir ${PWD}/tmp.repos" -D "release_suffix .$(date -u +%Y%m%d%H%M%S).git$(git rev-parse --short HEAD)" -ta ovirt-hosted-engine-ha-*.tar.gz
+
+    - name: Collect artifacts
+      run: |
+          mkdir -p exported-artifacts
+          find tmp.repos -iname \*rpm -exec mv "{}" exported-artifacts/ \;
+          mv ./*tar.gz exported-artifacts/
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: artifacts
+        path: exported-artifacts/
