@@ -71,10 +71,6 @@ Requires:       vdsm-client >= %{vdsm_version}
 Requires:       vdsm-python >= %{vdsm_version}
 Conflicts:      ovirt-hosted-engine-setup < 2.4
 
-BuildRequires:  vdsm-client >= %{vdsm_version}
-BuildRequires:  vdsm-python >= %{vdsm_version}
-BuildRequires:  vdsm-jsonrpc >= %{vdsm_version}
-
 %{?systemd_requires}
 BuildRequires:  systemd
 
@@ -94,9 +90,6 @@ Hosted engine manager for oVirt project.
         %{?conf}
 make %{?_smp_mflags}
 
-%check
-make test
-
 %install
 make %{?_smp_mflags} install DESTDIR="%{buildroot}"
 
@@ -113,7 +106,7 @@ install -Dm 0440 sudoers/sudoers %{buildroot}%{_sysconfdir}/sudoers.d/60_ovirt-h
 
 %files
 %license COPYING
-%doc README
+%doc README.md
 %doc doc/*.html doc/*.js
 
 %dir %{engine_ha_confdir}

@@ -1,3 +1,4 @@
+import logging
 import os
 try:
     import socketserver
@@ -18,6 +19,7 @@ except ImportError:
 import socket
 import base64
 
+LOGGER = logging.getLogger(__name__)
 
 class UnixXmlRpcHandler(xmlrpc_server.SimpleXMLRPCRequestHandler):
     disable_nagle_algorithm = False
@@ -70,7 +72,9 @@ class UnixXmlRpcHttpConnection(http_client.HTTPConnection):
         self.timeout = timeout
 
     def connect(self):
+        LOGGER.info('UnixXmlRpcHttpConnection start')
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.sock.connect(base64.b16decode(self.host))
         if self.timeout is not None:
             self.sock.settimeout(self.timeout)
+        LOGGER.info('UnixXmlRpcHttpConnection end')
