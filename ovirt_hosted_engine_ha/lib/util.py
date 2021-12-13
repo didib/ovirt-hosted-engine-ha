@@ -449,8 +449,6 @@ def __vdsm_json_rpc_check(logger=None, timeout=VDSM_MAX_RETRY):
 
     # VDSM is not responding, setting client to None
     event_broadcaster().notify_connection_was_closed()
-    __log_debug(logger, 'Closing the connection to VDSM')
-    _vdsm_json_rpc.close()
     _vdsm_json_rpc = None
     return retry
 
